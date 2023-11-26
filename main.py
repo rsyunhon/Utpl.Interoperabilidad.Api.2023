@@ -4,49 +4,50 @@ from typing import List
 
 app = FastAPI()
 
-# Modelo de datos para una persona
-class Person(BaseModel):
-    name: str
-    age: int
-    email: str
+# Modelo de datos para un pedido
+class Pedido(BaseModel):
+    detalle: str
+    cantidad: int
+    mesa: int
+    mesero: str
     id: int
 
-# Lista para almacenar personas (simulación de base de datos)
-people_db = []
+# Lista para almacenar pedidos (simulación de base de datos)
+pedido_db = []
 
-# Operación para crear una persona
-@app.post("/persona/", response_model=Person)
-def create_person(person: Person):
-    people_db.append(person)
-    return person
+# Operación para crear un pedido
+@app.post("/pedido/", response_model=Pedido)
+def create_pedido(pedido: Pedido):
+    pedido_db.append(pedido)
+    return pedido
 
-# Operación para obtener todas las personas
-@app.get("/persona/", response_model=List[Person])
-def get_all_people():
-    return people_db
+# Operación para obtener todas los pedidos
+@app.get("/pedido/", response_model=List[Pedido])
+def get_all_pedido():
+    return pedido_db
 
-# Operación para obtener una persona por ID
-@app.get("/persona/{person_id}", response_model=Person)
-def get_person_by_id(person_id: int):
-    for person in people_db:
-        if person.id == person_id:
-            return person
-    raise HTTPException(status_code=404, detail="Persona no encontrada")
+# Operación para obtener un pedido por ID
+@app.get("/pedido/{pedido_id}", response_model=Pedido)
+def get_pedido_by_id(pedido_id: int):
+    for pedido in pedido_db:
+        if pedido.id == pedido_id:
+            return pedido
+    raise HTTPException(status_code=404, detail="Pedido no encontrada")
 
-# Operación para editar una persona por ID
-@app.put("/persona/{person_id}", response_model=Person)
-def update_person(person_id: int, updated_person: Person):
-    for index, person in enumerate(people_db):
-        if person.id == person_id:
-            people_db[index] = updated_person
-            return updated_person
-    raise HTTPException(status_code=404, detail="Persona no encontrada")
+# Operación para editar un pedido por ID
+@app.put("/pedido/{pedido_id}", response_model=Pedido)
+def update_pedido(pedido_id: int, updated_pedido: Pedido):
+    for index, person in enumerate(pedido_db):
+        if person.id == pedido_id:
+            pedido_db[index] = updated_pedido
+            return updated_pedido
+    raise HTTPException(status_code=404, detail="Pedido no encontrada")
 
-# Operación para eliminar una persona por ID
-@app.delete("/persona/{person_id}", response_model=Person)
-def delete_person(person_id: int):
-    for index, person in enumerate(people_db):
-        if person.id == person_id:
-            deleted_person = people_db.pop(index)
-            return deleted_person
-    raise HTTPException(status_code=404, detail="Persona no encontrada")
+# Operación para eliminar un pedido por ID
+@app.delete("/pedido/{pedido_id}", response_model=Pedido)
+def delete_pedido(pedido_id: int):
+    for index, pedido in enumerate(pedido_db):
+        if pedido.id == pedido_id:
+            deleted_pedido = pedido_db.pop(index)
+            return deleted_pedido
+    raise HTTPException(status_code=404, detail="Pedido no encontrada")
