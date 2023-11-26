@@ -32,7 +32,7 @@ def get_pedido_by_id(pedido_id: int):
     for pedido in pedido_db:
         if pedido.id == pedido_id:
             return pedido
-    raise HTTPException(status_code=404, detail="Pedido no encontrada")
+    raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
 # Operación para editar un pedido por ID
 @app.put("/pedido/{pedido_id}", response_model=Pedido)
@@ -41,7 +41,7 @@ def update_pedido(pedido_id: int, updated_pedido: Pedido):
         if person.id == pedido_id:
             pedido_db[index] = updated_pedido
             return updated_pedido
-    raise HTTPException(status_code=404, detail="Pedido no encontrada")
+    raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
 # Operación para eliminar un pedido por ID
 @app.delete("/pedido/{pedido_id}", response_model=Pedido)
@@ -50,4 +50,4 @@ def delete_pedido(pedido_id: int):
         if pedido.id == pedido_id:
             deleted_pedido = pedido_db.pop(index)
             return deleted_pedido
-    raise HTTPException(status_code=404, detail="Pedido no encontrada")
+    raise HTTPException(status_code=404, detail="Pedido no encontrado")
