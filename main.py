@@ -7,23 +7,24 @@ import pymongo
 from versioned_fastapi import version, FastApiVersioner
 
 app = FastAPI(
-    title="Api Persona - Segundo bimestre",
-    description="API para el manejo de presonas segundo parcial",
+    title="API de pedidos del segundo parcial",
+    description="API para el manejo de pedidos en el segundo parcial de la materia de Interoperabilidad",
     version="1.0.1",
     contact={
-        "name": "Ricardo Yunhon",
-        "email": "asistemacomp@gmail.com",
-        "url":"http://www.google.com",
+        "name": "Ricaro Yunhon",
+        "email": "rsyunhon@utpl.edu.ec",
+        "url": "https://github.com/rsyunhon/Utpl.Interoperabilidad.Api"
     },
     license_info={
-        "name":"Desarrolladores",
-        "url":"http://www.google.com",
+        "name": "MIT License",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    openapi_tags={
-        "name": "Persona",
-        "description":"operacion del Manejo de personas",
-    }
-
+    openapi_tags=[
+        {
+            "name": "Pedidos",
+            "description": "Operaciones para el manejo de pedidos"
+        }
+    ]
 )
 
 # Modelo de datos para un pedido
