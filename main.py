@@ -3,6 +3,11 @@ from pydantic import BaseModel
 from typing import List
 import pymongo
 
+#configuracion de mongo
+cliente = pymongo.MongoClient("mongodb+srv://rsyunhonop:m0n1c4120.Ec@cluster0.xpefy.mongodb.net/?retryWrites=true&w=majority")
+database = cliente["Interoperatividad"]
+coleccion = database["apiPedido"]
+
 #libreria para el manejo de versiones
 from versioned_fastapi import version, FastApiVersioner
 
@@ -41,7 +46,7 @@ pedido_db = []
 @version(1)
 @app.post("/pedido/", response_model=Pedido, tags=["Pedido"] )
 def create_pedido(pedido: Pedido):
-    pedido_db.append(pedido)
+    result= coleccion.insert_one(pedido.dict())
     return pedido
 
 # Operación para obtener todas los pedidos
