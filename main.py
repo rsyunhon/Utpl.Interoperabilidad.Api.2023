@@ -13,11 +13,11 @@ app = FastAPI(
     contact={
         "name": "Ricardo Yunhon",
         "email": "asistemacomp@gmail.com",
-        "url":"www.google.com",
+        "url":"http://www.google.com",
     },
     license_info={
         "name":"Desarrolladores",
-        "url":"www.google.com",
+        "url":"http://www.google.com",
     },
     openapi_tags={
         "name": "Persona",
