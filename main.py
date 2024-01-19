@@ -13,7 +13,7 @@ app = FastAPI(
     contact={
         "name": "Ricaro Yunhon",
         "email": "rsyunhon@utpl.edu.ec",
-        "url": "https://github.com/rsyunhon/Utpl.Interoperabilidad.Api"
+        "url": "https://github.com/rsyunhon/Utpl.Interoperabilidad.Api.2023"
     },
     license_info={
         "name": "MIT License",
@@ -21,7 +21,7 @@ app = FastAPI(
     },
     openapi_tags=[
         {
-            "name": "Pedidos",
+            "name": "Pedido",
             "description": "Operaciones para el manejo de pedidos"
         }
     ]
@@ -39,20 +39,20 @@ pedido_db = []
 
 # Operación para crear un pedido
 @version(1)
-@app.post("/pedido/", response_model=Pedido )
+@app.post("/pedido/", response_model=Pedido, tags=["Pedido"] )
 def create_pedido(pedido: Pedido):
     pedido_db.append(pedido)
     return pedido
 
 # Operación para obtener todas los pedidos
 @version(1)
-@app.get("/pedido/", response_model=List[Pedido])
+@app.get("/pedido/", response_model=List[Pedido], tags=["Pedido"])
 def get_all_pedido():
     return pedido_db
 
 # Operación para obtener un pedido por ID
 @version(1)
-@app.get("/pedido/{pedido_id}", response_model=Pedido)
+@app.get("/pedido/{pedido_id}", response_model=Pedido, tags=["Pedido"])
 def get_pedido_by_id(pedido_id: int):
     for pedido in pedido_db:
         if pedido.id == pedido_id:
@@ -61,7 +61,7 @@ def get_pedido_by_id(pedido_id: int):
 
 # Operación para editar un pedido por ID
 @version(1)
-@app.put("/pedido/{pedido_id}", response_model=Pedido)
+@app.put("/pedido/{pedido_id}", response_model=Pedido, tags=["Pedido"])
 def update_pedido(pedido_id: int, updated_pedido: Pedido):
     for index, person in enumerate(pedido_db):
         if person.id == pedido_id:
@@ -71,7 +71,7 @@ def update_pedido(pedido_id: int, updated_pedido: Pedido):
 
 # Operación para eliminar un pedido por ID
 @version(1)
-@app.delete("/pedido/{pedido_id}", response_model=Pedido)
+@app.delete("/pedido/{pedido_id}", response_model=Pedido, tags=["Pedido"])
 def delete_pedido(pedido_id: int):
     for index, pedido in enumerate(pedido_db):
         if pedido.id == pedido_id:
