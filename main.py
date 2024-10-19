@@ -2,6 +2,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from typing import List
 import pymongo
+from bson.objectid import ObjectId
 
 #libreria para generar un id unico
 import uuid
@@ -45,6 +46,7 @@ class Pedido(BaseModel):
 
 # Modelo de repositorio para un pedido
 class PedidoRepositorio(BaseModel):
+    id: str
     detalle: str
     cantidad: int
     mesa: int
@@ -54,14 +56,15 @@ class PedidoRepositorio(BaseModel):
 
 
 # Lista para almacenar pedidos (simulación de base de datos)
-pedido_db = []
+# pedido_db = []
 
 # Operación para crear un pedido
 @version(1)
 @app.post("/pedido/", response_model=PedidoRepositorio, tags=["Pedido"] )
 def create_pedido(pedido: Pedido):
     idPedido=str(uuid.uuid4())
-    itemPedido = PedidoRepositorio(detalle=pedido.detalle, cantidad=pedido.cantidad, mesa=pedido.mesa, mesero=pedido.mesero, pedidoNumero=pedido.pedidoNumero,  id=idPedido)
+    itemPedido = PedidoRepositorio(id=idPedido, **pedido.dict()) 
+    #detalle=pedido.detalle, cantidad=pedido.cantidad, mesa=pedido.mesa, mesero=pedido.mesero, pedidoNumero=pedido.pedidoNumero,  id=idPedido)
     result = coleccion.insert_one(itemPedido.dict())
     return itemPedido
 
@@ -70,47 +73,51 @@ def create_pedido(pedido: Pedido):
 @app.get("/pedido/", response_model=List[PedidoRepositorio], tags=["Pedido"])
 def get_all_pedido():
     items = list(coleccion.find())
-    return items
+    pedidos = [PedidoRepositorio(id=str(item["_id"]), **item) for item in items]
+    return pedidos
 
 # Operación para obtener un pedido por ID
 @version(1)
-@app.get("/pedido/{pedido_id}", response_model=Pedido, tags=["Pedido"])
+@app.get("/pedido/{pedido_id}", response_model=PedidoRepositorio, tags=["Pedido"])
 def get_pedido_by_id(pedido_id: str):
-    item = coleccion.find_one({"id": pedido_id})
-    if item is not None:
-        return item
+    item = coleccion.find_one({"_id": ObjectId(pedido_id)})
+    if item:
+        return PedidoRepositorio(id=str(item["_id"]), **item)
     else:
-        raise HTTPException(status_code=404, detail="Pedido no encontrada")
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
 # Operación para editar un pedido por ID
 @version(1)
 @app.put("/pedido/{pedido_id}", response_model=PedidoRepositorio, tags=["Pedido"])
 def update_pedido(pedido_id: str, updated_pedido: Pedido):
-    for index, person in enumerate(pedido_db):
-        if person.id == pedido_id:
-            pedido_db[index] = updated_pedido
-            return updated_pedido
-    raise HTTPException(status_code=404, detail="Pedido no encontrado")
+    result = coleccion.update_one(
+        {"_id": ObjectId(pedido_id)},
+        {"$set": updated_pedido.dict()}
+    )
+    if result.matched_count:
+        return PedidoRepositorio(id=pedido_id, **updated_pedido.dict())
+    else:
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
 # Operación para eliminar un pedido por ID
 @version(1)
 @app.delete("/pedido/{pedido_id}", response_model=PedidoRepositorio, tags=["Pedido"])
-def delete_pedido(pedido_id: int):
-    item = coleccion.find_one({"pedidoNumero": pedido_id})
-    if item is not None:
-        return item
+def delete_pedido(pedido_id: str):
+    item = coleccion.find_one_and_delete({"_id": ObjectId(pedido_id)})
+    if item:
+        return PedidoRepositorio(id=str(item["_id"]), **item)
     else:
-        raise HTTPException(status_code=404, detail="Pedido no encontrada")
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
 # Operación para obtener una pedido por identificacion
 @version(1)
 @app.get("/pedido/mesa/{mesa}", response_model=Pedido, tags=["Pedido"])
-def get_person_by_identification(mesa: int):
+def get_pedido_by_mesa(mesa: int):
     item = coleccion.find_one({"mesa": mesa})
-    if item is not None:
-        return item
+    if item:
+        return PedidoRepositorio(id=str(item["_id"]), **item)
     else:
-        raise HTTPException(status_code=404, detail="Mesa no encontrada")
+        raise HTTPException(status_code=404, detail="Pedido no encontrado")
 
 
 # Version your app
